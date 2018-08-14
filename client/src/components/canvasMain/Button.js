@@ -17,6 +17,25 @@ class Button extends Component {
       hover: false,
     })
   }
+  handleProps = () => {
+    if(this.props.name === 'Save'){
+      this.props.submitCanvas();
+    }
+    if(this.props.name === 'Clear'){
+      this.props.clearCanvas();
+    }
+    if(this.props.name === 'Instructions'){
+      this.props.instMenuHandler();
+    }
+    if(this.props.name === 'Color'){
+      this.props.clearMenus();
+      this.props.colorMenuHandler();
+    }
+    if(this.props.name === 'Shape'){
+      this.props.clearMenus();
+      this.props.shapeMenuHandler();
+    }
+  }
   render(){
     const style = {
       main: {
@@ -53,9 +72,7 @@ class Button extends Component {
         style={this.state.hover ? style.mainHover : style.main}
         onMouseEnter={this.hoverOn}
         onMouseLeave={this.hoverOff}
-        onClick={this.props.name === 'Save' ? this.props.submitCanvas : this.props.clearCanvas}
-        onClick={this.props.name === 'Color' ? this.props.colorToggleHandler : null}
-        onClick={this.props.name === 'Shape' ? this.props.shapeToggleHandler : null}
+        onClick={this.handleProps}
       >
         {this.props.name}
       </div>

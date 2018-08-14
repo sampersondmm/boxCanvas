@@ -63,6 +63,8 @@ class Authform extends Component {
         width:'100%',
         height:'30px',
         marginBottom:'20px',
+        fontSize: '20px',
+        padding:'7px',
         borderRadius:'2px',
         backgroundColor:'white',
         border:'1px solid rgb(100,100,100)'

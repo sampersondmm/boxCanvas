@@ -1,38 +1,57 @@
 import React, {Component} from 'react';
 import ColorDisplay from './ColorDisplay';
-import ColorToggle from './ColorToggle';
+import ColorMenu from './ColorMenu';
+import ShapeMenu from './ShapeMenu'
 import Button from './Button';
+import Instructions from './Instructions';
 
 class SidePanel extends Component {
   constructor(props){
     super(props);
     this.state = {
-      colorToggle: false,
-      shapeToggle: false,
+      colorMenuVisible: false,
+      shapeMenuVisible: false,
+      instVisible:false,
     }
   }
-  colorToggleHandler = () => {
-    alert('testing')
-    if(this.state.colorToggle){
+  colorMenuHandler = () => {
+    if(this.state.colorMenuVisible){
       this.setState({
-        colorToggle: false,
+        colorMenuVisible: false,
       })
     } else {
       this.setState({
-        colorToggle: true,
+        colorMenuVisible: true,
       })
     }
   }
-  shapeToggleHandler = () => {
-    if(this.state.shapeToggle){
+  shapeMenuHandler = () => {
+    if(this.state.shapeMenuVisible){
       this.setState({
-        shapeToggle: false,
+        shapeMenuVisible: false,
       })
     } else {
       this.setState({
-        shapeToggle: true,
+        shapeMenuVisible: true,
       })
     }
+  }
+  instMenuHandler = () => {
+    if(this.state.instVisible){
+      this.setState({
+        instVisible: false
+      })
+    } else {
+      this.setState({
+        instVisible: true
+      })
+    }
+  }
+  clearMenus = () => {
+    this.setState({
+      colorMenuVisible:false,
+      shapeMenuVisible:false,
+    })
   }
   render(){
     const style = {
@@ -58,41 +77,56 @@ class SidePanel extends Component {
     return(
       <div style={style.main}>
         <div style={style.upperWrap}>
-          <Button name='Position' />
-          <Button name='Size' />
-          <Button name='Rotation' />
-          <Button name='Border-width' />
-          <Button name='Opacity' />
-
+          <Button name='Position'/>
+          <Button name='Size'/>
+          <Button name='Rotation'/>
+          <Button name='Border-width'/>
+          <Button name='Opacity'/>
           <Button
             name='Shape'
+            shapeMenuHandler={this.shapeMenuHandler}
+            clearMenus={this.clearMenus}
           />
 
           <Button
             name='Color'
-            colorStatusHandler={this.props.colorStatusHandler}
-            colorToggleHandler={this.colorToggleHandler}
+            colorMenuHandler={this.colorMenuHandler}
+            clearMenus={this.clearMenus}
           />
 
           <ColorDisplay
-            redShape={this.props.redShape}
-            greenShape={this.props.greenShape}
-            blueShape={this.props.blueShape}
-            redBackground={this.props.redBackground}
-            greenBackground={this.props.greenBackground}
-            blueBackground={this.props.blueBackground}
+            colorArrShape={this.props.colorArrShape}
+            colorArrBackground={this.props.colorArrBackground}
             colorStatus={this.props.colorStatus}
+            shapeStatus={this.props.shapeStatus}
             opacity={this.props.opacity}
             shape={this.props.shape}
           />
 
-          <ColorToggle
-            colorToggle={this.state.colorToggle}
+          <ColorMenu
+            colorArrShape={this.props.colorArrShape}
+            colorArrBackground={this.props.colorArrBackground}
+            colorStatus={this.props.colorStatus}
+            colorStatusHandler={this.props.colorStatusHandler}
+            colorMenuVisible={this.state.colorMenuVisible}
+            colorMenuHandler={this.colorMenuHandler}
+            clearMenus={this.clearMenus}
+          />
+          <ShapeMenu
+            colorArrShape={this.props.colorArrShape}
+            colorArrBackground={this.props.colorArrBackground}
+            shapeStatus={this.props.shapeStatus}
+            shapeStatusHandler={this.props.shapeStatusHandler}
+            shapeMenuVisible={this.state.shapeMenuVisible}
+            shapeMenuHandler={this.shapeMenuHandler}
+            clearMenus={this.clearMenus}
           />
 
         </div>
+        <Instructions instVisible={this.state.instVisible} instMenuHandler={this.instMenuHandler}/>
 
         <div style={style.lowerWrap}>
+          <Button name='Instructions' instMenuHandler={this.instMenuHandler}/>
           <Button name='Clear' clearCanvas={this.props.clearCanvas}/>
           <Button name='Save' submitCanvas={this.props.submitCanvas}/>
         </div>

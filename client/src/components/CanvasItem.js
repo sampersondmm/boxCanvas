@@ -9,16 +9,18 @@ class CanvasItem extends Component {
   }
   createCanvas = () => {
     const ctx = this.refs.canvas.getContext('2d');
+    const colorBackground = this.props.array[0];
     ctx.canvas.width = window.innerWidth * .9;
     ctx.canvas.height = window.innerWidth * .5;
     ctx.beginPath();
-    ctx.fillStyle = 'rgb('+200+','+200+','+255+')'
+    ctx.fillStyle = 'rgb('+colorBackground[0]+','+colorBackground[1]+','+colorBackground[2]+')'
     ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height)
+
     this.props.array.forEach(function(el){
-      if(el.shape === 'square'){
-        let canvasFunction = (posX,posY,width,height,angle,color,opacity) => {
+      if(el.shapeStatus === 'square'){
+        let canvasFunction = (posX,posY,width,height,angle,colorShape,opacity) => {
           ctx.beginPath();
-          ctx.fillStyle = 'rgba('+el.color[0]+','+el.color[1]+','+el.color[2]+','+el.opacity+')';
+          ctx.fillStyle = 'rgba('+el.colorShape[0]+','+el.colorShape[1]+','+el.colorShape[2]+','+el.opacity+')';
           ctx.save();
           ctx.translate(el.posX, el.posY);
           ctx.rotate(el.angle * (Math.PI/180));
@@ -27,10 +29,10 @@ class CanvasItem extends Component {
         }
         canvasFunction();
       }
-      if(el.shape === 'circle'){
+      if(el.shapeStatus === 'circle'){
         let canvasFunction = (posX,posY,radius,color,opacity) => {
           ctx.beginPath();
-          ctx.fillStyle = 'rgba('+el.color[0]+','+el.color[1]+','+el.color[2]+','+el.opacity+')';
+          ctx.fillStyle = 'rgba('+el.colorShape[0]+','+el.colorShape[1]+','+el.colorShape[2]+','+el.opacity+')';
           ctx.arc(el.posX,el.posY,el.radius,0*Math.PI,2*Math.PI);
           ctx.fill();
         }
@@ -53,7 +55,7 @@ class CanvasItem extends Component {
       },
       infoWrap: {
         display:'flex',
-        padding:'10px',
+        padding:'15px',
         justifyContent:'space-between',
         alignItems:'center',
         backgroundColor:'rgb(230,230,230)'

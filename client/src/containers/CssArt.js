@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {postNewCanvas} from '../store/actions/canvas';
 import SidePanel from '../components/canvasMain/SidePanel';
@@ -8,20 +9,11 @@ class CssArt extends Component {
   constructor(props){
     super(props);
     this.state = {
-      shape: 'square',
-      colorShape: [0,0,0],
-      redShape:0,
-      greenShape:0,
-      blueShape:0,
-      redBackground: 200,
-      greenBackground: 200,
-      blueBackground: 255,
+      colorArrShape: [0,0,0,1],
+      colorArrBackground: [220,220,255],
       colorStatus: 'shape',
-      opacity: 1,
+      shapeStatus: 'square',
     }
-    this.redBackground = 200;
-    this.greenBackground = 200;
-    this.blueBackground = 255;
 
     this.screenActive = false;
     this.move = [false,false,false,false];
@@ -32,6 +24,7 @@ class CssArt extends Component {
     this.remove = false;
     this.stamp = false;
     this.stampArr = [];
+    this.stampArrBacklog = [];
 
     this.posY = 100;
     this.posX = 100;
@@ -39,16 +32,30 @@ class CssArt extends Component {
     this.height = 100;
     this.radius = 50;
     this.angle = 0;
+    this.angleSpeed = 2;
     this.degree = Math.PI/180;
     this.speed = 5;
+    this.slowDown = false;
     this.opacityChange = false;
     this.remove = false;
+    this.reUndo = false;
 
   }
+
   componentDidMount() {
       this.updateCanvas();
   }
+
+  //changes size,rotation,position,...
   changeShapeProperties = () => {
+    //if slowDown is true, speed is reduced
+    if(this.slowDown){
+      this.speed = 1;
+      this.angleSpeed = 1;
+    } else {
+      this.speed = 5;
+      this.angleSpeed = 2;
+    }
     //changes position
     if(this.move[0] && !this.stayStill){this.posX -= this.speed}
     if(this.move[1] && !this.stayStill){this.posY -= this.speed}
@@ -56,26 +63,14 @@ class CssArt extends Component {
     if(this.move[3] && !this.stayStill){this.posY += this.speed}
 
     //prevents position change when adjusting size, rotation...
-    if(this.size || this.rotate || this.red || this.green || this.blue || this.opacityChange){
+    if(this.size || this.rotateChange || this.red || this.green || this.blue || this.opacityChange){
       this.stayStill = true
     }else{
       this.stayStill = false
     }
 
-    //change shape
-    if(this.state.shape === 'square'){
-      this.setState({
-        shape: 'circle'
-      })
-    }
-    if(this.state.shape === 'circle'){
-      this.setState({
-        shape: 'square'
-      })
-    }
-
     //change size
-    if(this.state.shape === 'square'){
+    if(this.state.shapeStatus === 'square'){
       if(this.rotateReverse){
         if(this.move[3] && this.size && this.width > 5){this.width -= this.speed}
         if(this.move[0] && this.size && this.height > 5){this.height -= this.speed}
@@ -88,25 +83,15 @@ class CssArt extends Component {
         if(this.move[1] && this.size){this.height += this.speed}
       }
     }
-    if(this.state.shape === 'circle'){
+    if(this.state.shapeStatus === 'circle'){
       if(this.move[2] && this.size){this.radius += (this.speed/2)}
       if(this.move[0] && this.size && this.radius > 5){this.radius -= (this.speed/2)}
     }
 
-    //change opacity
-    if(this.opacityChange){
-      if(this.move[0] && this.state.opacity < 1){
-        this.setState({opacity: this.state.opacity += .01})
-      }
-      if(this.move[2] && this.state.opacity > 0){
-        this.setState({opacity: this.state.opacity -= .01})
-      }
-    }
-
     //change rotation
-    if(this.state.shape === 'square'){
-      if(this.move[0] && this.rotate){this.angle -= 2}
-      if(this.move[2] && this.rotate){this.angle += 2}
+    if(this.state.shapeStatus === 'square'){
+      if(this.move[0] && this.rotateChange){this.angle -= this.speed/3}
+      if(this.move[2] && this.rotateChange){this.angle += this.speed/3}
     }
 
     //reset axis rotation
@@ -135,133 +120,210 @@ class CssArt extends Component {
     }
 
   }
+
+  //removes last shape input
   undoLastInput = () => {
-    if(this.remove){
+    if(this.remove && this.stampArr.length > 0){
+      this.stampArrBacklog.push(this.stampArr[this.stampArr.length - 1]);
       this.stampArr.splice(-1);
+      console.log(this.stampArr);
+      console.log(this.stampArrBacklog);
+      this.remove = false;
+    } else {
       this.remove = false;
     }
   }
+
+  //reinserts last shape input
+  undoLastUndo = () => {
+    if(this.reUndo && this.stampArrBacklog.length > 0){
+      this.stampArr.push(this.stampArrBacklog[this.stampArrBacklog.length - 1]);
+      this.stampArrBacklog.splice(-1);
+      console.log(this.stampArr);
+      console.log(this.stampArrBacklog);
+      this.reUndo = false;
+    } else {
+      this.reUndo = false;
+    }
+  }
+
+  //changes color for shape and background
   changeColorProperties = () => {
-    // changes color propeties for the shapes
+    // changes color propeties for shapes
     if(this.state.colorStatus === 'shape'){
       if(this.red){
         if(this.move[0]){
-          if(this.state.redShape < 0){
-            this.setState({redShape: this.state.redShape += 2})
+          if(this.state.colorArrShape[0] < 0){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [0,newState[1],newState[2],newState[3]]})
           }
           else {
-            this.setState({redShape: this.state.redShape -= 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0] -= 2,newState[1],newState[2],newState[3]]})
           }
         }
         if(this.move[2]){
-          if(this.state.redShape > 255){
-            this.setState({redShape: 255})
+          if(this.state.colorArrShape[0] > 255){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [255,newState[1],newState[2],newState[3]]})
           }
           else {
-            this.setState({redShape: this.state.redShape += 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0] += 2,newState[1],newState[2],newState[3]]})
           }
         }
       }
       if(this.green){
         if(this.move[0]){
-          if(this.state.greenShape < 0){
-            this.setState({greenShape: 0})
+          if(this.state.colorArrShape[1] < 0){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],0,newState[2],newState[3]]})
           }
           else {
-            this.setState({greenShape: this.state.greenShape -= 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1] -= 2,newState[2],newState[3]]})
           }
         }
         if(this.move[2]){
-          if(this.state.greenShape > 255){
-            this.setState({greenShape: 255})
+          if(this.state.colorArrShape[1] > 255){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],255,newState[2],newState[3]]})
           }
           else {
-            this.setState({greenShape: this.state.greenShape += 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1] += 2,newState[2],newState[3]]})
           }
         }
       }
       if(this.blue){
         if(this.move[0]){
-          if(this.state.blueShape < 0){
-            this.setState({blueShape: 0})
+          if(this.state.colorArrShape[2] < 0){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1],0,newState[3]]})
           }
           else {
-            this.setState({blueShape: this.state.blueShape -= 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1],newState[2] -= 2,newState[3]]})
           }
         }
         if(this.move[2]){
-          if(this.state.blueShape > 255){
-            this.setState({blueShape: 255})
+          if(this.state.colorArrShape[2] > 255){
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1],255]})
           }
           else {
-            this.setState({blueShape: this.state.blueShape += 2})
+            let newState = this.state.colorArrShape;
+            this.setState({colorArrShape: [newState[0],newState[1],newState[2] += 2,newState[3]]})
+          }
+        }
+      }
+      //change opacity
+      if(this.opacityChange){
+        if(this.move[0]){
+          if(this.state.colorArrShape[3] < 1){
+            let newState = this.state.colorArrShape;
+            this.setState({
+              colorArrShape: [newState[0],newState[1],newState[2],newState[3] += .01]
+            })
+          } else {
+            let newState = this.state.colorArrShape;
+            this.setState({
+              colorArrShape: [newState[0],newState[1],newState[2],1]
+            })
+          }
+        }
+        if(this.move[2]){
+          if(this.state.colorArrShape[3] > 0){
+            let newState = this.state.colorArrShape;
+            this.setState({
+              colorArrShape: [newState[0],newState[1],newState[2],newState[3] -= .01]
+            })
+          } else {
+            let newState = this.state.colorArrShape;
+            this.setState({
+              colorArrShape: [newState[0],newState[1],newState[2],0]
+            })
           }
         }
       }
     }
 
+    // changes color propeties for shapes
     if(this.state.colorStatus === 'background'){
       //change red
       if(this.red){
         if(this.move[0]){
-          if(this.state.redBackground < 0){
-            this.redBackground = 0;
+          if(this.state.colorArrBackground[0] < 0){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [0, newState[1], newState[2]]})
           }
           else {
-            this.redBackground -= 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0] -= 2, newState[1], newState[2]]})
           }
         }
         if(this.move[2]){
-          if(this.redBackground > 255){
-            this.redBackground = 255;
+          if(this.state.colorArrBackground[0] > 255){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [255, newState[1], newState[2]]})
           }
           else {
-            this.redBackground += 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0] += 2, newState[1], newState[2]]})
           }
         }
       }
       //change green
       if(this.green){
         if(this.move[0]){
-          if(this.state.greenBackground < 0){
-            this.greenBackground = 0;
+          if(this.state.colorArrBackground[1] < 0){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], 0, newState[2]]})
           }
           else {
-            this.greenBackground -= 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1] -= 2, newState[2]]})
           }
         }
         if(this.move[2]){
-          if(this.greenBackground > 255){
-            this.greenBackground = 255;
+          if(this.state.colorArrBackground[1] > 255){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], 255, newState[2]]})
           }
           else {
-            this.greenBackground += 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1] += 2, newState[2]]})
           }
         }
       }
       //change blue
       if(this.blue){
         if(this.move[0]){
-          if(this.state.blueBackground < 0){
-            this.blueBackground = 0;
+          if(this.state.colorArrBackground[2] < 0){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1], 0]})
           }
           else {
-            this.blueBackground -= 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1], newState[2] -= 2]})
           }
         }
         if(this.move[2]){
-          if(this.blueBackground > 255){
-            this.blueBackground = 255;
+          if(this.state.colorArrBackground[2] > 255){
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1], 255]})
           }
           else {
-            this.blueBackground += 2;
+            let newState = this.state.colorArrBackground;
+            this.setState({colorArrBackground: [newState[0], newState[1], newState[2] += 2]})
           }
         }
       }
     }
   }
+
+  //switches between shape and background for color changing
   colorStatusHandler = () => {
-    alert('JUST FIRED!!!');
     if(this.state.colorStatus === 'shape'){
       this.setState({
         colorStatus: 'background'
@@ -274,9 +336,24 @@ class CssArt extends Component {
     }
   }
 
+  //switches between square and circle
+  shapeStatusHandler = () => {
+    if(this.state.shapeStatus === 'square'){
+      this.setState({
+        shapeStatus: 'circle'
+      })
+    }
+    if(this.state.shapeStatus === 'circle'){
+      this.setState({
+        shapeStatus: 'square'
+      })
+    }
+  }
+
+  //pushes shapes into array to be rendered
   storeShapesInArray = (ctx) => {
     //determines shape
-    if(this.state.shape === 'square'){
+    if(this.state.shapeStatus === 'square'){
       ctx.beginPath();
       ctx.fillStyle = 'rgba(125,125,125,.5)';
       ctx.save();
@@ -285,7 +362,7 @@ class CssArt extends Component {
       ctx.fillRect(-this.width / 2,-this.height / 2,this.width,this.height);
       ctx.restore();
     }
-    if(this.state.shape === 'circle'){
+    if(this.state.shapeStatus === 'circle'){
       ctx.beginPath();
       ctx.fillStyle = 'rgba(125,125,125,.5)';
       ctx.arc(this.posX,this.posY,this.radius,0*Math.PI,2*Math.PI);
@@ -293,13 +370,13 @@ class CssArt extends Component {
     }
 
     //pushes into array
-    if(this.stamp && this.state.shape === 'square'){
+    if(this.stamp && this.state.shapeStatus === 'square'){
       this.stampArr.push(
         {
           func:
-            function(posX,posY,width,height,angle,color,opacity){
+            function(posX,posY,width,height,angle,colorShape,opacity){
               ctx.beginPath();
-              ctx.fillStyle = 'rgba('+color[0]+','+color[1]+','+color[2]+','+opacity+')';
+              ctx.fillStyle = 'rgba('+colorShape[0]+','+colorShape[1]+','+colorShape[2]+','+opacity+')';
               ctx.save();
               ctx.translate(posX,posY);
               ctx.rotate(angle * (Math.PI/180));
@@ -311,43 +388,48 @@ class CssArt extends Component {
           width: this.width,
           height: this.height,
           angle: this.angle,
-          color: [this.state.redShape, this.state.greenShape, this.state.blueShape],
-          opacity: this.state.opacity,
-          shape: 'square',
+          colorShape: [this.state.colorArrShape[0], this.state.colorArrShape[1], this.state.colorArrShape[2]],
+          colorBackground: [this.state.colorArrBackground[0],this.state.colorArrBackground[1],this.state.colorArrBackground[2]],
+          opacity: this.state.colorArrShape[3],
+          shapeStatus:'square',
         }
       );
     }
-    if(this.stamp && this.state.shape === 'circle'){
+    if(this.stamp && this.state.shapeStatus === 'circle'){
       this.stampArr.push(
         {
           func:
-            function(posX,posY,radius,color,opacity){
+            function(posX,posY,radius,colorShape,opacity){
               ctx.beginPath();
-              ctx.fillStyle = 'rgba('+color[0]+','+color[1]+','+color[2]+','+opacity+')';
+              ctx.fillStyle = 'rgba('+colorShape[0]+','+colorShape[1]+','+colorShape[2]+','+opacity+')';
               ctx.arc(posX,posY,radius,0*Math.PI,2*Math.PI);
               ctx.fill();
             },
           posX: this.posX,
           posY: this.posY,
           radius: this.radius,
-          color: [this.state.redShape, this.state.greenShape, this.state.blueShape],
-          opacity: this.state.opacity,
-          shape:'circle',
+          colorShape: [this.state.colorArrShape[0], this.state.colorArrShape[1], this.state.colorArrShape[2]],
+          opacity: this.state.colorArrShape[3],
+          shapeStatus:'circle',
         }
       );
     }
     this.stamp = false;
   }
+
+  //render shapes that are in storeShapesInArray
   renderShapes = () => {
     this.stampArr.forEach(function(el){
-      if(el.shape === 'square'){
-        el.func(el.posX,el.posY,el.width,el.height,el.angle,el.color,el.opacity);
+      if(el.shapeStatus === 'square'){
+        el.func(el.posX,el.posY,el.width,el.height,el.angle,el.colorShape,el.opacity);
       }
-      if(el.shape === 'circle'){
-        el.func(el.posX,el.posY,el.radius,el.color,el.opacity);
+      if(el.shapeStatus === 'circle'){
+        el.func(el.posX,el.posY,el.radius,el.colorShape,el.opacity);
       }
     });
   }
+
+  //Main editor loop
   updateCanvas = () => {
     const ctx = this.refs.canvas.getContext('2d');
     ctx.canvas.width = window.innerWidth * .9;
@@ -357,7 +439,7 @@ class CssArt extends Component {
     setInterval(function(){
       //set the defaults for the background, and sets up canvas
       ctx.beginPath();
-      ctx.fillStyle = 'rgb('+this.redBackground+','+this.greenBackground+','+this.blueBackground+')'
+      ctx.fillStyle = 'rgb('+this.state.colorArrBackground[0]+','+this.state.colorArrBackground[1]+','+this.state.colorArrBackground[2]+')'
       ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height)
 
       //changes made to shapes
@@ -375,18 +457,30 @@ class CssArt extends Component {
       //removes last shape input
       this.undoLastInput();
 
+      //reinserts last shape removed
+      this.undoLastUndo();
+
+
     }.bind(this),25);
     //======================================================
     //======================================================
     //======End of setInterval==============================
   }
+
+  //removes all shapes from editor
   clearCanvas = () => {
     this.stampArr = [];
   }
+
+  //submits into database
   submitCanvas = () => {
-    this.props.postNewCanvas(this.stampArr);
+    this.stampArr.unshift(this.state.colorArrBackground);
     alert('Canvas Saved!');
+    this.props.postNewCanvas(this.stampArr);
+    this.props.history.push('/');
   }
+
+  //handles key press events
   keyDown = (e) => {
     e.preventDefault();
     const key = e.keyCode;
@@ -395,16 +489,22 @@ class CssArt extends Component {
     if(key === 39){this.move[2] = true}
     if(key === 40){this.move[3] = true}
 
-    if(key === 90 && key === 90){this.remove = true;}
+    if(key === 16){this.slowDown = true}
+
+    if(key === 90){this.remove = true}
+    if(key === 88){this.reUndo = true}
+
     if(key === 81){this.red = true}
     if(key === 87){this.green = true}
     if(key === 69){this.blue = true}
+    if(key === 82){this.opacityChange = true}
 
-    if(key === 51){this.opacityChange = true}
     if(key === 49){this.size = true}
     if(key === 32){this.stamp = true}
-    if(key === 50){this.rotate = true}
+    if(key === 50){this.rotateChange = true}
   }
+
+  //handles key press events
   keyUp = (e) => {
     const key = e.keyCode;
     if(key === 37){this.move[0] = false}
@@ -412,14 +512,17 @@ class CssArt extends Component {
     if(key === 39){this.move[2] = false}
     if(key === 40){this.move[3] = false}
 
+    if(key === 16){this.slowDown = false}
+
     if(key === 81){this.red = false}
     if(key === 87){this.green = false}
     if(key === 69){this.blue = false}
+    if(key === 82){this.opacityChange = false}
 
-    if(key === 51){this.opacityChange = false}
     if(key === 49){this.size = false}
-    if(key === 50){this.rotate = false}
+    if(key === 50){this.rotateChange = false}
   }
+
   render(){
     const style = {
       pageWrap: {
@@ -442,23 +545,26 @@ class CssArt extends Component {
     return(
       <div style={style.pageWrap}>
         <div style={style.canvasWrap}>
+
           <SidePanel
-            redShape={this.state.redShape} greenShape={this.state.greenShape} blueShape={this.state.blueShape}
 
+            colorArrShape={this.state.colorArrShape}
+            colorArrBackground={this.state.colorArrBackground}
 
-            redBackground={this.state.redBackground} greenBackground={this.state.greenBackground} blueBackground={this.state.blueBackground}
-            colorStatus={this.state.colorStatus}
             opacity={this.state.opacity}
 
             colorStatusHandler={this.colorStatusHandler}
             colorStatus={this.state.colorStatus}
 
-            changeShape={this.changeShape}
-            shape={this.state.shape}
+            shapeStatusHandler={this.shapeStatusHandler}
+            shapeStatus={this.state.shapeStatus}
+
             clearCanvas={this.clearCanvas}
             submitCanvas={this.submitCanvas}
+
           />
           <canvas style={style.main} ref="canvas" tabIndex='0' onKeyDown={this.keyDown} onKeyUp={this.keyUp}/>
+          
         </div>
       </div>
     );
