@@ -32,8 +32,16 @@ exports.deleteCanvas = async function(req,res,next) {
   try {
     let foundCanvas = await db.Canvas.findById(req.params.canvas_id);
     await foundCanvas.remove();
-    return res.status(200).json(founCanvas)
+    return res.status(200).json(foundCanvas)
   } catch(err) {
     return next(err)
+  }
+}
+
+exports.updateCanvas = async function(req,res,next){
+  try {
+    let newCanvas = await db.Canvas.findByIdAndUpdate(req.params.canvas_id,req.body.canvas._id)
+  } catch(err){
+
   }
 }

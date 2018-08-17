@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const methodOverride = require('method-override');
 const errorHandler = require('./handlers/error');
 const authRoutes = require('./routes/auth');
 const canvasRoutes = require('./routes/canvas');
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(methodOverride('_method'));
 
 //routes
 app.use('/api/auth', authRoutes);

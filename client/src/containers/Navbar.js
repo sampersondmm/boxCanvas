@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {logout} from '../store/actions/auth';
 
 class Navbar extends Component {
+  constructor(props){
+    super(props)
+  }
   logout = e => {
     e.preventDefault();
     this.props.logout();
@@ -11,12 +14,15 @@ class Navbar extends Component {
   render(){
     const style={
       main: {
+        display:'flex',
         width:'100%',
         height:'50px',
-        display:'flex',
         backgroundColor:'rgb(40,40,40)',
         alignItems:'center',
         justifyContent:'space-between',
+      },
+      hidden: {
+        display:'none'
       },
       logoWrap: {
         display:'flex',
@@ -68,7 +74,7 @@ class Navbar extends Component {
     }
 
     return(
-      <nav style={style.main}>
+      <nav style={this.props.visible ? style.main : style.hidden}>
         <div style={style.logoWrap}>
           <Link to='/' style={style.link}>
             <div style={style.logo}>
@@ -88,6 +94,9 @@ class Navbar extends Component {
             <li>
               <a onClick={this.logout} style={style.link}>Log Out</a>
             </li>
+            <li>
+              <Link to={`/users/${this.props.currentUser.user.id}/profile`} style={style.link}>{this.props.currentUser.user.username}</Link>
+            </li>
           </div>
         ) : (
           <ul style={style.nav}>
@@ -102,7 +111,8 @@ class Navbar extends Component {
 
 function mapStateToProps(state){
   return {
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    visible: state.navbar.visible,
   }
 }
 

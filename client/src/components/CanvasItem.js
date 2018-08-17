@@ -1,22 +1,26 @@
 import React, {Component} from 'react';
 import Moment from 'react-moment';
-import {Link} from 'react-router-dom';
-import DefaultProfileImageUrl from '../images/default-image.jpg'
+import {Link,Redirect,Route} from 'react-router-dom';
+import DefaultProfileImageUrl from '../images/default-image.jpg';
 
 class CanvasItem extends Component {
   constructor(props){
     super(props)
   }
+  componentDidMount(){
+    this.createCanvas();
+  }
   createCanvas = () => {
+    const {canvasData} = this.props;
     const ctx = this.refs.canvas.getContext('2d');
-    const colorBackground = this.props.array[0];
-    ctx.canvas.width = window.innerWidth * .9;
-    ctx.canvas.height = window.innerWidth * .5;
+    const colorBackground = canvasData[0];
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
     ctx.beginPath();
     ctx.fillStyle = 'rgb('+colorBackground[0]+','+colorBackground[1]+','+colorBackground[2]+')'
     ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height)
 
-    this.props.array.forEach(function(el){
+    canvasData.forEach(function(el){
       if(el.shapeStatus === 'square'){
         let canvasFunction = (posX,posY,width,height,angle,colorShape,opacity) => {
           ctx.beginPath();
@@ -40,16 +44,38 @@ class CanvasItem extends Component {
       }
     });
   }
-  componentDidMount(){
-    this.createCanvas()
+  handleRemove = () => {
+    this.props.removeCanvas()
+      .then(res => this.props.reRender(res))
   }
   render(){
     const style = {
+      main: {
+        position:'relative',
+        marginTop:'30px',
+      },
+      link: {
+        textDecoration:'none',
+        color:'black'
+      },
+      hidden: {
+        display:'none',
+      },
+      delete:{
+        height:'30px',
+        width:'30px',
+        border:'3px solid rgb(50,50,50)',
+        borderRadius:'50%',
+        backgroundColor:'rgb(150,150,150)',
+        zIndex:'2',
+        position:'absolute',
+        top:'10px',
+        right:'10px',
+      },
       canvasWrap: {
         display:'flex',
       },
       canvas: {
-        marginTop:'30px',
         width:'45vw',
         height:'25vw',
       },
@@ -67,12 +93,13 @@ class CanvasItem extends Component {
       }
     }
     return(
-      <div>
+      <div style={style.main} name={this.props.username}>
+        <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}></div>
         <div style={style.canvasWrap}>
-          <canvas style={style.canvas} ref='canvas' />
+          <canvas style={style.canvas} ref='canvas' onClick={this.props.handleView}/>
         </div>
         <div style={style.infoWrap}>
-          <Link to='/' style={style.username}>{this.props.username}</Link>
+          <div style={style.username} onClick={this.props.handleUser} >{this.props.username}</div>
           <Moment format='Do MMM YYYY'>{this.props.date}</Moment>
         </div>
       </div>

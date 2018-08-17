@@ -3,10 +3,7 @@ export const REMOVE_ERROR = 'REMOVE_ERROR';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const LOAD_CANVAS = 'LOAD_CANVAS';
 export const REMOVE_CANVAS = 'REMOVE_CANVAS';
+export const VIEW_CANVAS = 'VIEW_CANVAS';
 
-//for canvas editor=========================
-export const COLOR_SHAPE = 'COLOR_SHAPE';
-export const COLOR_BACKGROUND = 'COLOR_BACKGROUND';
-
-export const SHAPE_SQUARE = 'SHAPE_SQUARE';
-export const SHAPE_CIRCLE = 'SHAPE_CIRCLE';
+export const HIDE_NAVIGATION = 'HIDE_NAVIGATION';
+export const SHOW_NAVIGATION = 'SHOW_NAVIGATION';

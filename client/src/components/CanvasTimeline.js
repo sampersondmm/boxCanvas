@@ -4,7 +4,7 @@ import Canvaslist from '../containers/Canvaslist';
 const CanvasTimeline = props => {
   return (
     <div>
-      <Canvaslist/>
+      <Canvaslist {...props}/>
     </div>
   )
 }

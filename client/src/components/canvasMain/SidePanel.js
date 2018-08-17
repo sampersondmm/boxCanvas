@@ -4,6 +4,7 @@ import ColorMenu from './ColorMenu';
 import ShapeMenu from './ShapeMenu'
 import Button from './Button';
 import Instructions from './Instructions';
+import SubmitForm from './SubmitForm';
 
 class SidePanel extends Component {
   constructor(props){
@@ -11,6 +12,7 @@ class SidePanel extends Component {
     this.state = {
       colorMenuVisible: false,
       shapeMenuVisible: false,
+      submitFormVisible: false,
       instVisible:false,
     }
   }
@@ -36,6 +38,17 @@ class SidePanel extends Component {
       })
     }
   }
+  submitFormHandler = () => {
+    if(this.state.submitFormVisible){
+      this.setState({
+        submitFormVisible:false,
+      })
+    } else {
+      this.setState({
+        submitFormVisible:true,
+      })
+    }
+  }
   instMenuHandler = () => {
     if(this.state.instVisible){
       this.setState({
@@ -51,12 +64,14 @@ class SidePanel extends Component {
     this.setState({
       colorMenuVisible:false,
       shapeMenuVisible:false,
+      instVisible:false,
+      submitFormVisible:false,
     })
   }
   render(){
     const style = {
       main: {
-        height:'50vw',
+        height:'100vh',
         display:'flex',
         flexDirection:'column',
         justifyContent:'space-between',
@@ -124,11 +139,13 @@ class SidePanel extends Component {
 
         </div>
         <Instructions instVisible={this.state.instVisible} instMenuHandler={this.instMenuHandler}/>
+        <SubmitForm submitFormVisible={this.state.submitFormVisible} submitCanvas={this.props.submitCanvas}/>
 
         <div style={style.lowerWrap}>
           <Button name='Instructions' instMenuHandler={this.instMenuHandler}/>
           <Button name='Clear' clearCanvas={this.props.clearCanvas}/>
-          <Button name='Save' submitCanvas={this.props.submitCanvas}/>
+          <Button name='Save' submitCanvas={this.props.submitCanvas} submitFormHandler={this.submitFormHandler}/>
+          <Button name='Exit' exitCanvas={this.props.exitCanvas}/>
         </div>
       </div>
     );

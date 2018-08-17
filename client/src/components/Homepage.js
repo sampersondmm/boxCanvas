@@ -9,7 +9,7 @@ const Homepage = ({currentUser}) => {
   }
   return (
     <div>
-      <CanvasTimeline />
+      <CanvasTimeline/>
     </div>
   )
 }

@@ -2,10 +2,12 @@ import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {postNewCanvas} from '../store/actions/canvas';
+import {hideNavigation, showNavigation} from '../store/actions/navbar';
 import SidePanel from '../components/canvasMain/SidePanel';
 import Instructions from '../components/canvasMain/Instructions';
 
 class CssArt extends Component {
+
   constructor(props){
     super(props);
     this.state = {
@@ -44,6 +46,11 @@ class CssArt extends Component {
 
   componentDidMount() {
       this.updateCanvas();
+      this.props.hideNavigation();
+  }
+
+  componentWillUnmount(){
+    this.props.showNavigation();
   }
 
   //changes size,rotation,position,...
@@ -432,8 +439,8 @@ class CssArt extends Component {
   //Main editor loop
   updateCanvas = () => {
     const ctx = this.refs.canvas.getContext('2d');
-    ctx.canvas.width = window.innerWidth * .9;
-    ctx.canvas.height = window.innerWidth * .5;
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
     //======================================================
     //======================================================
     setInterval(function(){
@@ -474,10 +481,15 @@ class CssArt extends Component {
 
   //submits into database
   submitCanvas = () => {
+    let canvasSize = [window.innerWidth,window.innerHeight]
+    this.stampArr.unshift(canvasSize);
     this.stampArr.unshift(this.state.colorArrBackground);
-    alert('Canvas Saved!');
     this.props.postNewCanvas(this.stampArr);
     this.props.history.push('/');
+  }
+
+  exitCanvas = () => {
+    this.props.history.push('/')
   }
 
   //handles key press events
@@ -539,7 +551,7 @@ class CssArt extends Component {
       main: {
         display:'flex',
         width:'90vw',
-        height:'50vw',
+        height:'100vh',
       }
     }
     return(
@@ -561,10 +573,12 @@ class CssArt extends Component {
 
             clearCanvas={this.clearCanvas}
             submitCanvas={this.submitCanvas}
+            exitCanvas={this.exitCanvas}
 
           />
+
           <canvas style={style.main} ref="canvas" tabIndex='0' onKeyDown={this.keyDown} onKeyUp={this.keyUp}/>
-          
+
         </div>
       </div>
     );
@@ -579,4 +593,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, {postNewCanvas})(CssArt);
+export default connect(mapStateToProps, {postNewCanvas,hideNavigation, showNavigation})(CssArt);

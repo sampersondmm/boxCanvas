@@ -19,10 +19,13 @@ class Button extends Component {
   }
   handleProps = () => {
     if(this.props.name === 'Save'){
-      this.props.submitCanvas();
+      this.props.submitFormHandler();
     }
     if(this.props.name === 'Clear'){
       this.props.clearCanvas();
+    }
+    if(this.props.name === 'Exit'){
+      this.props.exitCanvas();
     }
     if(this.props.name === 'Instructions'){
       this.props.instMenuHandler();

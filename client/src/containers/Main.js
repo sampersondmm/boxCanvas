@@ -5,8 +5,12 @@ import Homepage from '../components/Homepage';
 import Authform from '../components/Authform';
 import {authUser} from '../store/actions/auth';
 import {removeError} from '../store/actions/errors';
+import {fetchCanvas} from '../store/actions/canvas';
 import withAuth from '../hocs/withAuth';
-import CssArt from '../containers/CssArt';
+import CssArt from './CssArt';
+import ViewCanvas from './ViewCanvas'
+import ViewUser from './ViewUser';
+import ProfilePage from './ProfilePage';
 
 const Main = props => {
   const {authUser,errors,removeError,currentUser} = props;
@@ -57,7 +61,32 @@ const Main = props => {
         <Route
           path='/users/:id/canvas/new'
           component={withAuth(CssArt)}
-        u/>
+        />
+        <Route
+          exact
+          path='/users/:id/canvas/:id/edit'
+          componenent={withAuth(CssArt)}
+        />
+        <Route
+          path='/users/:id/canvas/:id'
+          render={props => (
+            <ViewCanvas {...props} fetchCanvas={fetchCanvas}/>
+          )}
+        />
+        <Route
+          exact
+          path='/users/:id'
+          render={props => (
+            <ViewUser {...props} fetchCanvas={fetchCanvas}/>
+          )}
+        />
+        <Route
+          exact
+          path='/users/:id/profile'
+          render={props => (
+            <ProfilePage {...props}/>
+          )}
+        />
       </Switch>
     </div>
   )
@@ -66,7 +95,8 @@ const Main = props => {
 function mapStateToProps(state){
   return {
     currentUser: state.currentUser,
-    errors: state.errors
+    canvas:state.canvas,
+    errors: state.errors,
   }
 }
 
