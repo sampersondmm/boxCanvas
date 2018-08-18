@@ -66,11 +66,14 @@ class CanvasItem extends Component {
         width:'30px',
         border:'3px solid rgb(50,50,50)',
         borderRadius:'50%',
-        backgroundColor:'rgb(150,150,150)',
-        zIndex:'2',
-        position:'absolute',
-        top:'10px',
-        right:'10px',
+        backgroundColor:'rgb(250,150,150)',
+      },
+      edit:{
+        height:'30px',
+        width:'30px',
+        border:'3px solid rgb(50,50,50)',
+        borderRadius:'50%',
+        backgroundColor:'rgb(150,150,250)',
       },
       canvasWrap: {
         display:'flex',
@@ -94,12 +97,13 @@ class CanvasItem extends Component {
     }
     return(
       <div style={style.main} name={this.props.username}>
-        <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}></div>
         <div style={style.canvasWrap}>
           <canvas style={style.canvas} ref='canvas' onClick={this.props.handleView}/>
         </div>
         <div style={style.infoWrap}>
           <div style={style.username} onClick={this.props.handleUser} >{this.props.username}</div>
+          <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}></div>
+          <div style={this.props.secure ? style.edit : style.hidden} onClick={this.props.editCanvas}></div>
           <Moment format='Do MMM YYYY'>{this.props.date}</Moment>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link,Route,Redirect,withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {fetchCanvas, removeCanvas,viewCanvas} from '../store/actions/canvas';
+import {fetchCanvas, removeCanvas,setCurrentCanvas} from '../store/actions/canvas';
 import CanvasItem from '../components/CanvasItem';
 
 
@@ -20,12 +20,12 @@ class CanvaslistRouter extends Component {
   handleView = canvas => {
     let canvasId = canvas._id;
     let userId = canvas.user._id;
-    this.props.viewCanvas(canvas);
+    this.props.setCurrentCanvas(canvas);
     this.props.history.push(`/users/${userId}/canvas/${canvasId}`)
   }
   handleUser = canvas => {
     let userId = canvas.user._id;
-    this.props.viewCanvas(canvas);
+    this.props.setCurrentCanvas(canvas);
     this.props.history.push(`/users/${userId}`)
   }
   reRender = () => {
@@ -74,4 +74,4 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps, {fetchCanvas,removeCanvas,viewCanvas})(Canvaslist);
+export default connect(mapStateToProps, {fetchCanvas,removeCanvas,setCurrentCanvas})(Canvaslist);

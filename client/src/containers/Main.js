@@ -63,11 +63,6 @@ const Main = props => {
           component={withAuth(CssArt)}
         />
         <Route
-          exact
-          path='/users/:id/canvas/:id/edit'
-          componenent={withAuth(CssArt)}
-        />
-        <Route
           path='/users/:id/canvas/:id'
           render={props => (
             <ViewCanvas {...props} fetchCanvas={fetchCanvas}/>

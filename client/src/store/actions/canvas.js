@@ -1,6 +1,6 @@
 import {apiCall} from '../../services/api';
 import {addError} from './errors';
-import {LOAD_CANVAS, REMOVE_CANVAS, VIEW_CANVAS} from '../actionTypes';
+import {LOAD_CANVAS, REMOVE_CANVAS, SET_CURRENT_CANVAS,CLEAR_CURRENT_CANVAS} from '../actionTypes';
 
 export const loadCanvas = canvas => ({
   type: LOAD_CANVAS,
@@ -12,9 +12,13 @@ export const remove = id => ({
   id
 })
 
-export const viewCanvas = currentCanvas => ({
-  type: VIEW_CANVAS,
+export const setCurrentCanvas = currentCanvas => ({
+  type: SET_CURRENT_CANVAS,
   currentCanvas
+})
+
+export const clearCurrentCanvas = () => ({
+  type: CLEAR_CURRENT_CANVAS,
 })
 
 

@@ -1,4 +1,4 @@
-import {LOAD_CANVAS, REMOVE_CANVAS, VIEW_CANVAS} from '../actionTypes';
+import {LOAD_CANVAS, REMOVE_CANVAS, SET_CURRENT_CANVAS,CLEAR_CURRENT_CANVAS} from '../actionTypes';
 
 
 export const canvas = (state = [], action) => {
@@ -14,8 +14,10 @@ export const canvas = (state = [], action) => {
 
 export const currentCanvas = (state = {},action) => {
   switch(action.type){
-    case VIEW_CANVAS:
+    case SET_CURRENT_CANVAS:
       return {...action.currentCanvas};
+    case CLEAR_CURRENT_CANVAS:
+      return {}
     default:
       return state;
   }

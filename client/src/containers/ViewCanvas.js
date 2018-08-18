@@ -6,7 +6,6 @@ class ViewCanvas extends Component {
     super(props)
   }
   componentDidMount(){
-    debugger;
     this.createCanvas(this.props.currentCanvas)
   }
   createCanvas = (canvas) => {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {viewCanvas} from '../store/actions/canvas';
+import {setCurrentCanvas} from '../store/actions/canvas';
 import CanvasItem from '../components/CanvasItem'
 
 class ViewUser extends Component {
@@ -20,7 +20,7 @@ class ViewUser extends Component {
   handleView = canvas => {
     let canvasId = canvas._id;
     let userId = canvas.user._id;
-    this.props.viewCanvas(canvas);
+    this.props.setCurrentCanvas(canvas);
     this.props.history.push(`/users/${userId}/canvas/${canvasId}`)
   }
   renderList = canvas => {
@@ -70,4 +70,4 @@ function mapStateToProps(state){
   }
 }
 
-export default connect(mapStateToProps, {viewCanvas})(ViewUser);
+export default connect(mapStateToProps, {setCurrentCanvas})(ViewUser);

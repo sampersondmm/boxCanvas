@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {postNewCanvas} from '../store/actions/canvas';
+import {postNewCanvas,clearCurrentCanvas} from '../store/actions/canvas';
 import {hideNavigation, showNavigation} from '../store/actions/navbar';
 import SidePanel from '../components/canvasMain/SidePanel';
 import Instructions from '../components/canvasMain/Instructions';
@@ -45,12 +45,18 @@ class CssArt extends Component {
   }
 
   componentDidMount() {
-      this.updateCanvas();
-      this.props.hideNavigation();
+    this.updateCanvas();
+    this.props.hideNavigation();
+    // if(this.props.currentCanvas.canvasData){
+    //   this.stampArr = this.props.currentCanvas.canvasData;
+    // }
   }
 
   componentWillUnmount(){
     this.props.showNavigation();
+    if(this.props.currentCanvas){
+      this.props.clearCurrentCanvas();
+    }
   }
 
   //changes size,rotation,position,...
@@ -477,13 +483,17 @@ class CssArt extends Component {
   //removes all shapes from editor
   clearCanvas = () => {
     this.stampArr = [];
+    console.log(this.props.currentCanvas)
+    debugger;
   }
 
   //submits into database
   submitCanvas = () => {
     let canvasSize = [window.innerWidth,window.innerHeight]
+    console.log(this.stampArr)
     this.stampArr.unshift(canvasSize);
     this.stampArr.unshift(this.state.colorArrBackground);
+    debugger;
     this.props.postNewCanvas(this.stampArr);
     this.props.history.push('/');
   }
@@ -587,10 +597,11 @@ class CssArt extends Component {
 
 function mapStateToProps(state){
   return {
+    currentCanvas: state.currentCanvas,
     colorStatus: state.colorStatus,
     errors: state.errors,
   }
 }
 
 
-export default connect(mapStateToProps, {postNewCanvas,hideNavigation, showNavigation})(CssArt);
+export default connect(mapStateToProps, {postNewCanvas, clearCurrentCanvas, hideNavigation, showNavigation})(CssArt);
