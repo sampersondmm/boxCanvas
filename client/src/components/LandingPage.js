@@ -1,21 +1,35 @@
 import React, {Component} from 'react';
-import Moment from 'react-moment';
-import {connect} from 'react-redux';
+import backgroundArr from './homepageBackgrounds';
 
-class ViewCanvas extends Component {
+class LandingPage extends Component {
   constructor(props){
     super(props)
+    this.state = {
+      index: 0,
+    }
   }
   componentDidMount(){
-    this.createCanvas(this.props.currentCanvas)
-    console.log(this.props)
+    const ranNumber = Math.floor(Math.random() * backgroundArr.length);
+    this.createCanvas(ranNumber)
   }
-  createCanvas = (canvas) => {
-    const canvasData = canvas.canvasData;
+
+
+  // changeBackground = () => {
+  //   setTimeout(function(){
+  //     if(this.state.index)
+  //     this.setState({
+  //       this.
+  //     })
+  //   },2000).bind(this)
+  // }
+
+  createCanvas = ranNumber => {
+    const canvasData = backgroundArr[1];
+    debugger;
     const ctx = this.refs.canvas.getContext('2d');
     const colorBackground = canvasData[0];
     ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerWidth / 2;
+    ctx.canvas.height = window.innerHeight;
     ctx.beginPath();
     ctx.fillStyle = 'rgb('+colorBackground[0]+','+colorBackground[1]+','+colorBackground[2]+')'
     ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height)
@@ -44,60 +58,50 @@ class ViewCanvas extends Component {
       }
     });
   }
+
   render(){
     const style = {
-      main: {
+      canvas:{
+        position:'absolute',
+        top:'0',
+        zIndex:'-1',
+      },
+      wrap: {
+        padding:'50px',
+        margin:'150px auto',
+        width:'50%',
         display:'flex',
         flexDirection:'column',
         justifyContent:'center',
         alignItems:'center',
+        // backgroundColor:'rgb(40,40,40)'
       },
-      canvas:{
-        width:'90vw',
-        height:'50vw',
-      },
-      button: {
-        height:'30px',
-        width:'90vw',
-        backgroundColor:'rgb(50,50,50)',
-        borderRadius:'3px',
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-        marginBottom:'100px',
-        color:'rgb(230,230,230)'
-      },
-      infoWrap: {
-        display:'flex',
-        padding:'15px',
-        justifyContent:'space-between',
-        alignItems:'center',
-        backgroundColor:'rgb(230,230,230)',
-        width:'90vw',
-      },
-      username: {
-        textDecoration:'none',
+      header: {
+        fontSize:'40px',
+        margin:'20px',
+        // color:'rgb(180,180,180)',
         color:'black',
-        fontSize:'25px',
+        textShadow:'2px 2px 2px rgb(150,150,150)'
+      },
+      mainHeader: {
+        fontSize:'60px',
+        fontWeight:'lighter',
+        fontFamily:'Quicksand',
+        // color:'rgb(180,180,180)',
+        color:'black',
+        textShadow:'2px 2px 2px rgb(150,150,150)'
       }
     }
     return(
-      <div style={style.main}>
+      <div>
         <canvas style={style.canvas} ref='canvas'/>
-        <div style={style.infoWrap}>
-          <div style={style.username} onClick={this.props.handleUser} >{this.props.currentCanvas.user.username}</div>
-          <Moment format='Do MMM YYYY'>{this.props.date}</Moment>
+        <div style={style.wrap}>
+          <h2 style={style.header}>Welcome To</h2>
+          <h1 style={style.mainHeader}>Box Canvas</h1>
         </div>
       </div>
-    );
+    )
   }
 }
 
-function mapStateToProps(state){
-  return {
-    canvas: state.canvas,
-    currentCanvas: state.currentCanvas
-  }
-}
-
-export default connect(mapStateToProps)(ViewCanvas);
+export default LandingPage;

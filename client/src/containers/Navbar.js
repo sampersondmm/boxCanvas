@@ -14,7 +14,7 @@ class NavbarRouter extends Component {
   logout = e => {
     e.preventDefault();
     this.props.logout();
-    this.props.history.push('/');
+    this.props.history.push('/')
   }
   render(){
     const style={
@@ -94,7 +94,7 @@ class NavbarRouter extends Component {
               <div style={style.logo.box3}></div>
             </div>
           </Link>
-          <h2 style={style.heading}>boxCanvas</h2>
+          <h2 style={style.heading}>BOX CANVAS</h2>
         </div>
         {this.props.currentUser.isAuthenticated ? (
           <div style={style.nav}>
