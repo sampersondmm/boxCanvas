@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {postNewCanvas,clearCurrentCanvas} from '../store/actions/canvas';
+import {postNewCanvas,clearCurrentCanvas,updateCanvas,removeCanvas} from '../store/actions/canvas';
 import {hideNavigation, showNavigation} from '../store/actions/navbar';
 import SidePanel from '../components/canvasMain/SidePanel';
 import Instructions from '../components/canvasMain/Instructions';
@@ -47,9 +47,15 @@ class CssArt extends Component {
   componentDidMount() {
     this.updateCanvas();
     this.props.hideNavigation();
-    // if(this.props.currentCanvas.canvasData){
-    //   this.stampArr = this.props.currentCanvas.canvasData;
-    // }
+    if(this.props.currentCanvas.canvasData){
+      this.stampArr = this.props.currentCanvas.canvasData;
+      this.setState({
+        colorArrBackground: this.props.currentCanvas.canvasData[0]
+      })
+      console.log(this.props.currentCanvas);
+      debugger;
+      // this.colorArrBackground = this.props.currentCanvas.canvasData
+    }
   }
 
   componentWillUnmount(){
@@ -139,8 +145,6 @@ class CssArt extends Component {
     if(this.remove && this.stampArr.length > 0){
       this.stampArrBacklog.push(this.stampArr[this.stampArr.length - 1]);
       this.stampArr.splice(-1);
-      console.log(this.stampArr);
-      console.log(this.stampArrBacklog);
       this.remove = false;
     } else {
       this.remove = false;
@@ -365,7 +369,7 @@ class CssArt extends Component {
 
   //pushes shapes into array to be rendered
   storeShapesInArray = (ctx) => {
-    //determines shape
+    // determines shape
     if(this.state.shapeStatus === 'square'){
       ctx.beginPath();
       ctx.fillStyle = 'rgba(125,125,125,.5)';
@@ -386,16 +390,6 @@ class CssArt extends Component {
     if(this.stamp && this.state.shapeStatus === 'square'){
       this.stampArr.push(
         {
-          func:
-            function(posX,posY,width,height,angle,colorShape,opacity){
-              ctx.beginPath();
-              ctx.fillStyle = 'rgba('+colorShape[0]+','+colorShape[1]+','+colorShape[2]+','+opacity+')';
-              ctx.save();
-              ctx.translate(posX,posY);
-              ctx.rotate(angle * (Math.PI/180));
-              ctx.fillRect(-width / 2,-height / 2,width,height);
-              ctx.restore();
-            },
           posX: this.posX,
           posY: this.posY,
           width: this.width,
@@ -411,13 +405,6 @@ class CssArt extends Component {
     if(this.stamp && this.state.shapeStatus === 'circle'){
       this.stampArr.push(
         {
-          func:
-            function(posX,posY,radius,colorShape,opacity){
-              ctx.beginPath();
-              ctx.fillStyle = 'rgba('+colorShape[0]+','+colorShape[1]+','+colorShape[2]+','+opacity+')';
-              ctx.arc(posX,posY,radius,0*Math.PI,2*Math.PI);
-              ctx.fill();
-            },
           posX: this.posX,
           posY: this.posY,
           radius: this.radius,
@@ -431,13 +418,29 @@ class CssArt extends Component {
   }
 
   //render shapes that are in storeShapesInArray
-  renderShapes = () => {
+  renderShapes = (ctx) => {
+
     this.stampArr.forEach(function(el){
       if(el.shapeStatus === 'square'){
-        el.func(el.posX,el.posY,el.width,el.height,el.angle,el.colorShape,el.opacity);
+        let canvasFunction = (posX,posY,width,height,angle,colorShape,opacity) => {
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba('+el.colorShape[0]+','+el.colorShape[1]+','+el.colorShape[2]+','+el.opacity+')';
+          ctx.save();
+          ctx.translate(el.posX, el.posY);
+          ctx.rotate(el.angle * (Math.PI/180));
+          ctx.fillRect(-el.width / 2,-el.height / 2,el.width,el.height);
+          ctx.restore();
+        }
+        canvasFunction();
       }
       if(el.shapeStatus === 'circle'){
-        el.func(el.posX,el.posY,el.radius,el.colorShape,el.opacity);
+        let canvasFunction = (posX,posY,radius,color,opacity) => {
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba('+el.colorShape[0]+','+el.colorShape[1]+','+el.colorShape[2]+','+el.opacity+')';
+          ctx.arc(el.posX,el.posY,el.radius,0*Math.PI,2*Math.PI);
+          ctx.fill();
+        }
+        canvasFunction();
       }
     });
   }
@@ -462,7 +465,7 @@ class CssArt extends Component {
       this.changeColorProperties();
 
       //renders the shapes that were stored in array
-      this.renderShapes();
+      this.renderShapes(ctx);
 
       //pushes shapes into array for storage
       this.storeShapesInArray(ctx);
@@ -489,13 +492,17 @@ class CssArt extends Component {
 
   //submits into database
   submitCanvas = () => {
-    let canvasSize = [window.innerWidth,window.innerHeight]
-    console.log(this.stampArr)
-    this.stampArr.unshift(canvasSize);
-    this.stampArr.unshift(this.state.colorArrBackground);
-    debugger;
-    this.props.postNewCanvas(this.stampArr);
-    this.props.history.push('/');
+    if(this.props.currentCanvas.canvasData){
+      this.stampArr.shift();
+      this.stampArr.unshift(this.state.colorArrBackground);
+      this.props.removeCanvas(this.props.currentCanvas.user._id,this.props.currentCanvas._id);
+      this.props.postNewCanvas(this.stampArr)
+        .then(() => this.props.history.push('/users/:id/profile'))
+    } else {
+      this.stampArr.unshift(this.state.colorArrBackground);
+      this.props.postNewCanvas(this.stampArr);
+      this.props.history.push('/');
+    }
   }
 
   exitCanvas = () => {
@@ -604,4 +611,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, {postNewCanvas, clearCurrentCanvas, hideNavigation, showNavigation})(CssArt);
+export default connect(mapStateToProps, {postNewCanvas, removeCanvas, updateCanvas, clearCurrentCanvas, hideNavigation, showNavigation})(CssArt);

@@ -136,17 +136,40 @@ class SidePanel extends Component {
             shapeMenuHandler={this.shapeMenuHandler}
             clearMenus={this.clearMenus}
           />
-
         </div>
-        <Instructions instVisible={this.state.instVisible} instMenuHandler={this.instMenuHandler}/>
-        <SubmitForm submitFormVisible={this.state.submitFormVisible} submitCanvas={this.props.submitCanvas}/>
+
+        <Instructions
+          instVisible={this.state.instVisible}
+          instMenuHandler={this.instMenuHandler}
+        />
+
+        <SubmitForm
+          submitFormVisible={this.state.submitFormVisible}
+          submitCanvas={this.props.submitCanvas}
+        />
 
         <div style={style.lowerWrap}>
-          <Button name='Instructions' instMenuHandler={this.instMenuHandler}/>
-          <Button name='Clear' clearCanvas={this.props.clearCanvas}/>
-          <Button name='Save' submitCanvas={this.props.submitCanvas} submitFormHandler={this.submitFormHandler}/>
-          <Button name='Exit' exitCanvas={this.props.exitCanvas}/>
+          <Button
+            name='Instructions'
+            instMenuHandler={this.instMenuHandler}
+          />
+
+          <Button
+            name='Clear'
+            clearCanvas={this.props.clearCanvas}
+          />
+
+          <Button
+            name='Save'
+            submitFormHandler={this.submitFormHandler}
+          />
+
+          <Button
+            name='Exit'
+            exitCanvas={this.props.exitCanvas}
+          />
         </div>
+
       </div>
     );
   }

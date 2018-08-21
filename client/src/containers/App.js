@@ -24,7 +24,7 @@ const App = props => {
     <Provider store={store}>
       <Router>
         <div>
-          <Navbar {...props}/>
+          <Navbar />
           <Main />
         </div>
       </Router>

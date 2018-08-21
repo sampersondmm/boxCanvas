@@ -3,13 +3,18 @@ import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {logout} from '../store/actions/auth';
 
-class Navbar extends Component {
+const Navbar = withRouter(props => {
+  return <NavbarRouter {...props}/>
+})
+
+class NavbarRouter extends Component {
   constructor(props){
     super(props)
   }
   logout = e => {
     e.preventDefault();
     this.props.logout();
+    this.props.history.push('/');
   }
   render(){
     const style={
@@ -34,27 +39,32 @@ class Navbar extends Component {
         position:'relative',
         height:'50px',
         width:'50px',
-        backgroundColor:'black',
+        borderRadius:'50%',
+        background:'black',
+        border:'2px solid rgb(150,150,150)',
         box1: {
-          height:'30px',
-          width:'30px',
           position:'absolute',
-          backgroundColor:'rgb(10,230,150)'
+          top:'-5px',
+          left:'0',
+          height:'30px',
+          width:'40px',
+          background:'red',
         },
         box2: {
-          height:'10px',
-          width:'10px',
           position:'absolute',
+          top:'10px',
           left:'20px',
-          zIndex:'2',
-          backgroundColor:'rgb(10,10,150)'
+          height:'32px',
+          width:'25px',
+          background:'rgb(50,200,250)',
         },
         box3: {
-          height:'20px',
-          width:'10px',
           position:'absolute',
-          zIndex:'3',
-          backgroundColor:'rgb(250,100,100)'
+          top:'30px',
+          left:'10px',
+          height:'15px',
+          width:'20px',
+          background:'yellow',
         },
       },
       heading: {
@@ -70,6 +80,7 @@ class Navbar extends Component {
         color:'rgb(180,180,180)',
         padding:'10px',
         margin:'10px',
+        cursor:'pointer',
       }
     }
 
@@ -78,10 +89,9 @@ class Navbar extends Component {
         <div style={style.logoWrap}>
           <Link to='/' style={style.link}>
             <div style={style.logo}>
+              <div style={style.logo.box1}></div>
               <div style={style.logo.box2}></div>
               <div style={style.logo.box3}></div>
-              <div style={style.logo.box1}></div>
-              <div style={style.logo.box4}></div>
             </div>
           </Link>
           <h2 style={style.heading}>boxCanvas</h2>

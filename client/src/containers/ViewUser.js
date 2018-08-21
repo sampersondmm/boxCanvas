@@ -42,7 +42,6 @@ class ViewUser extends Component {
     this.setState({
       canvasList: canvasListData,
     })
-    debugger;
   }
   handleUser = canvas => {
     let userId = canvas.user._id;

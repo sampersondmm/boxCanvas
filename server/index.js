@@ -23,6 +23,8 @@ app.use('/api/users/:id/canvas',
   canvasRoutes
 );
 
+
+
 app.get('/api/canvas', loginRequired, async function(req,res,next){
   try {
     let canvas = await db.Canvas.find()

@@ -21,8 +21,6 @@ export const clearCurrentCanvas = () => ({
   type: CLEAR_CURRENT_CANVAS,
 })
 
-
-
 export const fetchCanvas = () => {
   return dispatch => {
     return apiCall('get', '/api/canvas')
@@ -42,6 +40,16 @@ export const removeCanvas = (user_id, canvas_id) => {
       .catch(err => addError(err.message))
   }
 }
+
+export const updateCanvas = (data,user_id,canvas_id) => {
+  return dispatch => {
+    return apiCall('post', `/api/users/${user_id}/canvas/${canvas_id}?_method=PUT`, {canvasData: data})
+      .then(res => {})
+      .catch(err => dispatch(addError(err)))
+  }
+}
+
+
 
 export const postNewCanvas = data => (dispatch, getState) => {
   let {currentUser} = getState();

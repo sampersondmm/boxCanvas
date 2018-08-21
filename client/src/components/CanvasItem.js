@@ -15,7 +15,7 @@ class CanvasItem extends Component {
     const ctx = this.refs.canvas.getContext('2d');
     const colorBackground = canvasData[0];
     ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    ctx.canvas.height = window.innerWidth / 2;
     ctx.beginPath();
     ctx.fillStyle = 'rgb('+colorBackground[0]+','+colorBackground[1]+','+colorBackground[2]+')'
     ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height)
@@ -62,18 +62,18 @@ class CanvasItem extends Component {
         display:'none',
       },
       delete:{
-        height:'30px',
-        width:'30px',
-        border:'3px solid rgb(50,50,50)',
-        borderRadius:'50%',
+        padding:'10px',
+        border:'1px solid rgb(50,50,50)',
+        borderRadius:'3px',
         backgroundColor:'rgb(250,150,150)',
+        cursor:'pointer',
       },
       edit:{
-        height:'30px',
-        width:'30px',
-        border:'3px solid rgb(50,50,50)',
-        borderRadius:'50%',
+        padding:'10px',
+        border:'1px solid rgb(50,50,50)',
+        borderRadius:'3px',
         backgroundColor:'rgb(150,150,250)',
+        cursor:'pointer',
       },
       canvasWrap: {
         display:'flex',
@@ -102,8 +102,8 @@ class CanvasItem extends Component {
         </div>
         <div style={style.infoWrap}>
           <div style={style.username} onClick={this.props.handleUser} >{this.props.username}</div>
-          <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}></div>
-          <div style={this.props.secure ? style.edit : style.hidden} onClick={this.props.editCanvas}></div>
+          <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}>Delete</div>
+          <div style={this.props.secure ? style.edit : style.hidden} onClick={this.props.editCanvas}>Edit</div>
           <Moment format='Do MMM YYYY'>{this.props.date}</Moment>
         </div>
       </div>

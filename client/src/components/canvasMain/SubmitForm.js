@@ -4,7 +4,8 @@ class SubmitForm extends Component {
   constructor(props){
     super(props)
   }
-  handleSubmit = () => {
+  handleSubmit = e => {
+    e.preventDefault();
     this.props.submitCanvas();
   }
   render(){
