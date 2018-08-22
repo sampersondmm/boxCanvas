@@ -35,6 +35,23 @@ class ShapeMenu extends Component {
         right:'0',
         top:'0',
         zIndex:'2',
+        cursor:'pointer',
+        cross1: {
+          width:'3px',
+          height:'100%',
+          background:'rgb(100,100,100)',
+          transform:'rotate(45deg)',
+          position:'absolute',
+          left:'42%',
+        },
+        cross2: {
+          width:'3px',
+          height:'100%',
+          background:'rgb(100,100,100)',
+          transform:'rotate(-45deg)',
+          position:'absolute',
+          left:'42%',
+        },
       },
       text: {
         color:'rgb(200,200,200)',
@@ -69,7 +86,10 @@ class ShapeMenu extends Component {
     }
     return(
       <div style={this.props.shapeMenuVisible ? style.main : {...style.main, display:'none'}}>
-        <div style={style.exit} onClick={this.handleProps}></div>
+        <div style={style.exit} onClick={this.handleProps}>
+          <div style={style.exit.cross1}></div>
+          <div style={style.exit.cross2}></div>
+        </div>
         <p style={style.text}>Square</p>
         <div style={style.colorWrap}>
           <div

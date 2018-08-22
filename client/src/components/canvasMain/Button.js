@@ -28,7 +28,7 @@ class Button extends Component {
       this.props.exitCanvas();
     }
     if(this.props.name === 'Instructions'){
-      this.props.instMenuHandler();
+      this.props.instructionsMenuHandler();
     }
     if(this.props.name === 'Color'){
       this.props.clearMenus();

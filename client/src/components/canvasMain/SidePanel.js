@@ -13,7 +13,7 @@ class SidePanel extends Component {
       colorMenuVisible: false,
       shapeMenuVisible: false,
       submitFormVisible: false,
-      instVisible:false,
+      instructionsVisible:false,
     }
   }
   colorMenuHandler = () => {
@@ -49,14 +49,14 @@ class SidePanel extends Component {
       })
     }
   }
-  instMenuHandler = () => {
-    if(this.state.instVisible){
+  instructionsMenuHandler = () => {
+    if(this.state.instructionsVisible){
       this.setState({
-        instVisible: false
+        instructionsVisible: false
       })
     } else {
       this.setState({
-        instVisible: true
+        instructionsVisible: true
       })
     }
   }
@@ -95,7 +95,6 @@ class SidePanel extends Component {
           <Button name='Position'/>
           <Button name='Size'/>
           <Button name='Rotation'/>
-          <Button name='Border-width'/>
           <Button name='Opacity'/>
           <Button
             name='Shape'
@@ -139,8 +138,8 @@ class SidePanel extends Component {
         </div>
 
         <Instructions
-          instVisible={this.state.instVisible}
-          instMenuHandler={this.instMenuHandler}
+          instructionsVisible={this.state.instructionsVisible}
+          instructionsMenuHandler={this.instructionsMenuHandler}
         />
 
         <SubmitForm
@@ -151,7 +150,7 @@ class SidePanel extends Component {
         <div style={style.lowerWrap}>
           <Button
             name='Instructions'
-            instMenuHandler={this.instMenuHandler}
+            instructionsMenuHandler={this.instructionsMenuHandler}
           />
 
           <Button

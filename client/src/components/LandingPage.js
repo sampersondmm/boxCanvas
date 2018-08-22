@@ -13,18 +13,8 @@ class LandingPage extends Component {
     this.createCanvas(ranNumber)
   }
 
-
-  // changeBackground = () => {
-  //   setTimeout(function(){
-  //     if(this.state.index)
-  //     this.setState({
-  //       this.
-  //     })
-  //   },2000).bind(this)
-  // }
-
   createCanvas = ranNumber => {
-    const canvasData = backgroundArr[1];
+    const canvasData = backgroundArr[ranNumber];
     debugger;
     const ctx = this.refs.canvas.getContext('2d');
     const colorBackground = canvasData[0];

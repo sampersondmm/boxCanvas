@@ -82,6 +82,11 @@ class CanvasItem extends Component {
         width:'45vw',
         height:'25vw',
       },
+      canvasList: {
+        width:'45vw',
+        height:'25vw',
+        cursor:'pointer',
+      },
       infoWrap: {
         display:'flex',
         padding:'15px',
@@ -93,15 +98,16 @@ class CanvasItem extends Component {
         textDecoration:'none',
         color:'black',
         fontSize:'25px',
+        cursor:'pointer',
       }
     }
     return(
       <div style={style.main} name={this.props.username}>
         <div style={style.canvasWrap}>
-          <canvas style={style.canvas} ref='canvas' onClick={this.props.handleView}/>
+          <canvas style={this.props.status === 'list' ? style.canvasList : style.canvas} ref='canvas' onClick={this.props.handleView}/>
         </div>
         <div style={style.infoWrap}>
-          <div style={style.username} onClick={this.props.handleUser} >{this.props.username}</div>
+          <div style={style.username} onClick={this.props.viewUserPage ? null : this.props.handleUser} >{this.props.username}</div>
           <div style={this.props.secure ? style.delete : style.hidden} onClick={this.handleRemove}>Delete</div>
           <div style={this.props.secure ? style.edit : style.hidden} onClick={this.props.editCanvas}>Edit</div>
           <Moment format='Do MMM YYYY'>{this.props.date}</Moment>

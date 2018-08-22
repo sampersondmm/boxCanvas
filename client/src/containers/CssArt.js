@@ -70,7 +70,7 @@ class CssArt extends Component {
     //if slowDown is true, speed is reduced
     if(this.slowDown){
       this.speed = 1;
-      this.angleSpeed = 1;
+      this.angleSpeed = .5;
     } else {
       this.speed = 5;
       this.angleSpeed = 2;
@@ -156,8 +156,6 @@ class CssArt extends Component {
     if(this.reUndo && this.stampArrBacklog.length > 0){
       this.stampArr.push(this.stampArrBacklog[this.stampArrBacklog.length - 1]);
       this.stampArrBacklog.splice(-1);
-      console.log(this.stampArr);
-      console.log(this.stampArrBacklog);
       this.reUndo = false;
     } else {
       this.reUndo = false;
@@ -226,7 +224,7 @@ class CssArt extends Component {
         if(this.move[2]){
           if(this.state.colorArrShape[2] > 255){
             let newState = this.state.colorArrShape;
-            this.setState({colorArrShape: [newState[0],newState[1],255]})
+            this.setState({colorArrShape: [newState[0],newState[1],255,newState[3]]})
           }
           else {
             let newState = this.state.colorArrShape;
@@ -340,13 +338,13 @@ class CssArt extends Component {
   }
 
   //switches between shape and background for color changing
-  colorStatusHandler = () => {
-    if(this.state.colorStatus === 'shape'){
+  colorStatusHandler = params => {
+    if(this.state.colorStatus === 'shape' && params === 'background'){
       this.setState({
         colorStatus: 'background'
       })
     }
-    if(this.state.colorStatus === 'background'){
+    if(this.state.colorStatus === 'background' && params === 'shape'){
       this.setState({
         colorStatus: 'shape',
       })

@@ -4,8 +4,8 @@ class ColorMenu extends Component{
   constructor(props){
     super(props)
   }
-  handleProps = () => {
-    this.props.colorStatusHandler();
+  handleProps = (params = null) => {
+    this.props.colorStatusHandler(params);
     this.props.colorMenuHandler();
   }
   render(){
@@ -25,11 +25,28 @@ class ColorMenu extends Component{
       exit: {
         width:'20px',
         height:'20px',
-        backgroundColor:'black',
+        border:'1px solid rgb(100,100,100)',
         position:'absolute',
         right:'0',
         top:'0',
         zIndex:'2',
+        cursor:'pointer',
+        cross1: {
+          width:'3px',
+          height:'100%',
+          background:'rgb(100,100,100)',
+          transform:'rotate(45deg)',
+          position:'absolute',
+          left:'42%',
+        },
+        cross2: {
+          width:'3px',
+          height:'100%',
+          background:'rgb(100,100,100)',
+          transform:'rotate(-45deg)',
+          position:'absolute',
+          left:'42%',
+        },
       },
       text: {
         color:'rgb(200,200,200)',
@@ -57,7 +74,7 @@ class ColorMenu extends Component{
       colorBackgroundBorderOn: {
         width:'100%',
         height:'100%',
-        backgroundColor:'rgb('+this.props.colorArrBackground[0]+','+this.props.colorArrBackground[1]+','+this.props.colorArrBackground[2]+','+this.props.opacity+')',
+        backgroundColor:'rgb('+this.props.colorArrBackground[0]+','+this.props.colorArrBackground[1]+','+this.props.colorArrBackground[2]+')',
         border:'2px solid yellow'
       },
       colorBackgroundBorderOff: {
@@ -73,15 +90,18 @@ class ColorMenu extends Component{
     }
     return(
       <div style={this.props.colorMenuVisible ? style.main : {...style.main, display:'none'}}>
-        <div style={style.exit} onClick={this.props.colorMenuHandler}></div>
+        <div style={style.exit} onClick={this.props.colorMenuHandler}>
+          <div style={style.exit.cross1}></div>
+          <div style={style.exit.cross2}></div>
+        </div>
         <p style={style.text}>Background</p>
         <div style={style.colorWrap}>
-          <div style={this.props.colorStatus === 'shape' ? style.colorBackgroundBorderOff : style.colorBackgroundBorderOn} onClick={this.handleProps}></div>
+          <div style={this.props.colorStatus === 'shape' ? style.colorBackgroundBorderOff : style.colorBackgroundBorderOn} onClick={() => this.handleProps('background')}></div>
         </div>
         <hr style={style.hr}/>
         <p style={style.text}>Shape</p>
         <div style={style.colorWrap}>
-          <div style={this.props.colorStatus === 'shape' ? style.colorShapeBorderOn : style.colorShapeBorderOff} onClick={this.handleProps}></div>
+          <div style={this.props.colorStatus === 'shape' ? style.colorShapeBorderOn : style.colorShapeBorderOff} onClick={() => this.handleProps('shape')}></div>
         </div>
       </div>
     );

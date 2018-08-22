@@ -26,6 +26,7 @@ class ViewUser extends Component {
   renderList = canvas => {
     let canvasListData = canvas.map(canvas => (
       <CanvasItem
+        viewUserPage='true'
         key={canvas._id}
         canvas={canvas}
         date={canvas.createAt}

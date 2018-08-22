@@ -44,6 +44,7 @@ class CanvaslistRouter extends Component {
     }
     let canvasList = this.props.canvas.map(canvas => (
       <CanvasItem
+        status='list'
         key={canvas._id}
         canvas={canvas}
         date={canvas.createAt}
